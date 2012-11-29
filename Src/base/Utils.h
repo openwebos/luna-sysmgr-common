@@ -66,9 +66,6 @@ bool isNonErrorProcExit(int ecode,int normalCode=0);
 std::string windowIdentifierFromAppAndProcessId(const std::string& appId, const std::string& processId);
 bool splitWindowIdentifierToAppAndProcessId(const std::string& id, std::string& appId, std::string& processId);
 
-std::string getResourcePathFromString(const std::string& entry, const std::string& appId,
-									  const std::string& systemResourceFolder);
-
 std::string getHtml5DatabaseFolderNameForApp(const std::string& appId,std::string appFolderPath);
 
 void threadCleanup();

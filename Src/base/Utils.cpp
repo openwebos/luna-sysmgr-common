@@ -40,9 +40,6 @@
 #include <QByteArray>
 #include <QtDebug>
 
-#include "ApplicationManager.h"
-#include "ApplicationDescription.h"
-#include "Preferences.h"
 #include "Utils.h"
 
 void setPosTopLeft(QGraphicsItem* item, int x, int y)
@@ -428,48 +425,6 @@ bool splitWindowIdentifierToAppAndProcessId(const std::string& id, std::string& 
 	g_strfreev(strArray);
 
 	return true;
-}
-
-std::string getResourcePathFromString(const std::string& entry, const std::string& appId,
-									  const std::string& systemResourceFolder)
-{
-	if (entry.empty())
-		return std::string();
-
-	struct stat stBuf;
-
-	// Absolute path?
-	if (entry[0] == '/') {
-
-		// check if it exists and is a regular file
-		if (::stat(entry.c_str(), &stBuf) != 0 || !S_ISREG(stBuf.st_mode))
-			return std::string();
-
-		return entry;
-	}
-
-	// relative path. first check in the app folder
-	ApplicationDescription* appDesc = ApplicationManager::instance()->getAppById(appId);
-	if (appDesc) {
-
-        // First check in the locale specific folder
-		std::string filePath = appDesc->folderPath() + "/resources/" + Preferences::instance()->locale() + "/" + entry;
-		if (::stat(filePath.c_str(), &stBuf) == 0 && (S_ISREG(stBuf.st_mode) || S_ISLNK(stBuf.st_mode)))
-			return filePath;
-
-        // Try in the standard app folder path
-		filePath = appDesc->folderPath() + "/" + entry;
-		if (::stat(filePath.c_str(), &stBuf) == 0 && (S_ISREG(stBuf.st_mode) || S_ISLNK(stBuf.st_mode)))
-			return filePath;
-	}
-
-	// Look for it in the system folder
-	std::string filePath = systemResourceFolder + "/" + entry;
-	if (::stat(filePath.c_str(), &stBuf) == 0 && S_ISREG(stBuf.st_mode))
-		return filePath;
-
-	// ah well... we give up
-	return std::string();
 }
 
 //Should follow conventions for virtualHost naming in webkit: WebCore/platform/KURL.cpp

@@ -25,7 +25,7 @@
 
 #include "Localization.h"
 
-#include "Preferences.h"
+#include "LocalePreferences.h"
 #include "Settings.h"
 
 #include <QVector>
@@ -60,7 +60,7 @@ void Localization::loadLocalizedStrings()
 
 	QVector<std::string> translations;
 
-	std::string locale = Preferences::instance()->locale();
+    std::string locale = LocalePreferences::instance()->locale();
 	translations << Settings::LunaSettings()->lunaCustomizationLocalePath + "/" + locale + s_localeFile;
 	translations << Settings::LunaSettings()->lunaSystemLocalePath + "/" + locale + s_localeFile;
 
