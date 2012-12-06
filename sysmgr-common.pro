@@ -33,7 +33,7 @@
 #
 # LICENSE@@@
 
-TARGET = lunaSysMgrCommon
+TARGET = LunaSysMgrCommon
 TEMPLATE = lib
 
 CONFIG += qt
