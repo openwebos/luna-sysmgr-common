@@ -44,7 +44,7 @@ public:
 
 Q_SIGNALS:
     void prefsLocaleChanged(void);
-
+    void signalTimeFormatChanged(const char* format);
 private:
 
     LocalePreferences();

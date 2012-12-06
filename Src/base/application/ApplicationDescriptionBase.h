@@ -51,7 +51,6 @@ public:
 protected:
     // Gives an json_object filled by information within this class
     virtual json_object* getAppDescription() const;
-private:
 
     std::string             m_id;
     std::string             m_title;    //copy of default launchpoint's title

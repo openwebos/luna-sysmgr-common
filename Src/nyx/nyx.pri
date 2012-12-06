@@ -25,7 +25,6 @@ SOURCES += \
         NyxLedControl.cpp
 
 HEADERS += \
-        WindowedWebApp.h \
         NyxSensorCommonTypes.h \
         NyxSensorConnector.h \
         NyxInputControl.h \

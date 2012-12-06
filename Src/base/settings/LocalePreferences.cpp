@@ -415,6 +415,14 @@ bool LocalePreferences::getPreferencesCallback(LSHandle *sh, LSMessage *message,
             }
         }
     }
+    label = json_object_object_get(json, "timeFormat");
+    if (label && !is_error(label)) {
+        if (prefObjPtr) {
+            MutexLocker locker(&prefObjPtr->m_mutex);
+            prefObjPtr->m_currentTimeFormat = json_object_get_string(label);
+            Q_EMIT prefObjPtr->signalTimeFormatChanged(prefObjPtr->m_currentTimeFormat.c_str());
+        }
+    }
 Done:
 
     if (json && !is_error(json))

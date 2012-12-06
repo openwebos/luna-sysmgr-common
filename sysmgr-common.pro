@@ -91,7 +91,8 @@ HEADERS += \
     Timer.h \
     Utils.h \
     WindowProperties.h \
-    WindowTypes.h
+    WindowTypes.h \
+    ProcessKiller.h
 
 
 STAGING_INCDIR = $$(STAGING_INCDIR)
