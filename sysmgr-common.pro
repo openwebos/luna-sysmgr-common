@@ -35,7 +35,6 @@
 
 TARGET = LunaSysMgrCommon
 TEMPLATE = lib
-
 CONFIG += qt
 
 VPATH += Src \
@@ -116,7 +115,24 @@ DEFINES += SHIPPING_VERSION=0
 QMAKE_CXXFLAGS += -fno-rtti -fno-exceptions -Wall -fpermissive # -fvisibility=hidden
 QMAKE_CXXFLAGS += -DFIX_FOR_QT
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-variable -Wno-reorder -Wno-missing-field-initializers -Wno-extra
-include(desktop.pri)
+
+linux-g++ {
+    include(desktop.pri)
+} else:linux-g++-64 {
+    include(desktop.pri)
+} else:linux-qemux86-g++ {
+    include(emulator.pri)
+    QMAKE_CXXFLAGS += -fno-strict-aliasing
+} else {
+    ## First, check to see if this in an emulator build
+    include(emulator.pri)
+    contains (CONFIG_BUILD, webosemulator) {
+        QMAKE_CXXFLAGS += -fno-strict-aliasing
+    } else {
+        ## Neither a desktop nor an emulator build, so must be a device
+        include(device.pri)
+    }
+}
 
 INCLUDEPATH += $$VPATH
 
@@ -124,3 +140,4 @@ DESTDIR = ./$${BUILD_TYPE}-$${MACHINE_NAME}
 
 OBJECTS_DIR = $$DESTDIR/.obj
 MOC_DIR = $$DESTDIR/.moc
+

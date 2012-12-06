@@ -47,6 +47,7 @@
 
 #include <QWidget>
 #include <QApplication>
+#include <QKeyEvent>
 #include <qsocketnotifier.h>
 
 #include "CustomEvents.h"
@@ -54,11 +55,9 @@
 #include "HostBase.h"
 #include "Event.h"
 #include "MutexLocker.h"
-#include "WindowServer.h"
 #include "Settings.h"
 #include "HostArm.h"
 #include "Logging.h"
-#include "SystemUiController.h"
 
 #if defined(HAS_HIDLIB)
 #include "HidLib.h"
