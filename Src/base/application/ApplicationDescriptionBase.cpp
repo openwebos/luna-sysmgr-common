@@ -29,39 +29,19 @@ ApplicationDescriptionBase::ApplicationDescriptionBase()
     m_requestedWindowOrientation = "";
 }
 
-ApplicationDescriptionBase* ApplicationDescriptionBase::fromJsonString(const char* jsonStr, ApplicationDescriptionBase* base)
+bool ApplicationDescriptionBase::fromJsonObject(const struct json_object* root)
 {
-
-    ApplicationDescriptionBase* appDesc = NULL;
-    if (base) appDesc = base;
-    else
-        appDesc = new ApplicationDescriptionBase();
-
-    struct json_object* root=0;
-
-    root = json_tokener_parse( jsonStr );
-    if( !root || is_error( root ) )
-    {
-        fprintf( stderr, "ApplicationDescriptionBase::fromJsonString: Failed to parse string into a JSON string.\n" );
-        return 0;
-    }
-
     bool success = true;
 
-    success &= extractFromJson(root, "id", appDesc->m_id);
-    success &= extractFromJson(root, "main", appDesc->m_entryPoint);
-    success &= extractFromJson(root, "noWindow", appDesc->m_isHeadLess);
-    success &= extractFromJson(root, "requestedWindowOrientation", appDesc->m_requestedWindowOrientation);
+    success &= extractFromJson(root, "id", m_id);
+    success &= extractFromJson(root, "main", m_entryPoint);
+    success &= extractFromJson(root, "noWindow", m_isHeadLess);
+    success &= extractFromJson(root, "requestedWindowOrientation", m_requestedWindowOrientation);
 
-    if( root && !is_error(root) )json_object_put(root);
-
-    if(!success) {
+    if(!success)
         fprintf(stderr,"ApplicationDescriptionBase::fromJsonString : error decodeing app description JSON string.\n" );
-        delete appDesc;
-        return 0;
-    }
 
-    return appDesc;
+    return success;
 }
 
 void ApplicationDescriptionBase::getAppDescriptionString(std::string &descString) const

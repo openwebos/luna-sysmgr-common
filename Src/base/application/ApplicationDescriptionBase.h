@@ -37,9 +37,6 @@ public:
 
     ApplicationDescriptionBase();
     virtual ~ApplicationDescriptionBase() {}
-
-    static ApplicationDescriptionBase* fromJsonString(const char* jsonStr, ApplicationDescriptionBase* base = NULL);
-
     const std::string& id()         const { return m_id; }
     const std::string& title()         const { return m_title; }
     const std::string& entryPoint() const { return m_entryPoint; }
@@ -51,6 +48,8 @@ public:
 protected:
     // Gives an json_object filled by information within this class
     virtual json_object* getAppDescription() const;
+    // populates the base class with data from the json object
+    bool fromJsonObject(const struct json_object* json);
 
     std::string             m_id;
     std::string             m_title;    //copy of default launchpoint's title
