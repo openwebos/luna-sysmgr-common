@@ -72,14 +72,6 @@ INCLUDEPATH += \
 	$$(LUNA_STAGING)/include/sysmgr-ipc \
 	$$(LUNA_STAGING)/include/ime \
 
-header_files.path = $$(LUNA_STAGING)/include/luna-sysmgr-common
-header_files.commands = "mkdir -p $$(LUNA_STAGING)/include/luna-sysmgr-common ; cp `find -name \\*.h` $$(LUNA_STAGING)/include/luna-sysmgr-common"
-QMAKE_EXTRA_TARGETS += header_files
-INSTALLS += header_files
-
-
-
-
 
 #install
 target.path = $$(LUNA_STAGING)/lib

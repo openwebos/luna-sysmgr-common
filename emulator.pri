@@ -64,6 +64,7 @@ contains (CONFIG_BUILD, webosemulator) {
             $$(STAGING_INCDIR)/freetype2 \
             $$(STAGING_INCDIR)/PmLogLib/IncsPublic \
             $$(STAGING_INCDIR)/ime \
+            $$(STAGING_INCDIR)/luna-sysmgr-common \
 
 } else {
     warning($$MACHINE_NAME not matched in emulator.pri)

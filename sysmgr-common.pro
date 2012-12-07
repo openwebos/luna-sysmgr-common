@@ -42,7 +42,8 @@ VPATH += Src \
     Src/base/application \
     Src/base/hosts \
     Src/base/settings \
-    Src/core
+    Src/core \
+    include
 
 include(Src/nyx/nyx.pri)
 
