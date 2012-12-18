@@ -33,7 +33,12 @@ class FlickGesture : public QGesture
 {
 public:
 
-	FlickGesture(QObject* parent = 0) : QGesture(parent, (Qt::GestureType) SysMgrGestureFlick) {}
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+    FlickGesture(QObject* parent = 0) : QGesture(parent, (Qt::GestureType) SysMgrGestureFlick) {}
+#else
+    // QT5_TODO
+    FlickGesture(QObject* parent = 0) : QGesture(parent) {}//, (Qt::GestureType) SysMgrGestureFlick) {}
+#endif
 	QPoint velocity() const { return m_velocity; }
 	QPoint startPos() const { return m_startPos; }
 	QPoint endPos() const { return m_endPos; }

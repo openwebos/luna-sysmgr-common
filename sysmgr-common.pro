@@ -104,7 +104,7 @@ isEmpty(STAGING_LIBDIR):STAGING_LIBDIR = $$(STAGING_DIR)/lib
 CONFIG += link_pkgconfig
 PKGCONFIG = glib-2.0 gthread-2.0
 
-QT = core network gui
+QT = core network gui widgets
 
 # ../staging/include ../staging/include/PmLogLib ../staging/include/sysmgr-ipc
 
