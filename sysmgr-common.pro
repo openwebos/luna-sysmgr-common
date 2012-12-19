@@ -135,12 +135,10 @@ linux-g++ {
     }
 }
 
-INCLUDEPATH += $$VPATH $$(LUNA_STAGING)/usr/include
+INCLUDEPATH += $$VPATH
 
 DESTDIR = ./$${BUILD_TYPE}-$${MACHINE_NAME}
 
 OBJECTS_DIR = $$DESTDIR/.obj
 MOC_DIR = $$DESTDIR/.moc
-
-LIBS += -L$$(LUNA_STAGING)/usr/lib
 
