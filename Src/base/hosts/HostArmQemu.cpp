@@ -16,9 +16,6 @@
 *
 * LICENSE@@@ */
 
-
-
-
 #include "Common.h"
 
 #include "HostArm.h"
@@ -27,6 +24,12 @@
 #include <QWidget>
 #include <QtDebug>
 #include <QGraphicsView>
+
+#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
+    #define KEYS Qt
+#else
+    #define KEYS
+#endif
 
 class HostArmQemuKeyFilter : public QObject
 {
@@ -42,49 +45,49 @@ protected:
 
 			switch (keyEvent->key())
 			{
-			case Qt::Key_Left:
+			case KEYS::Key_Left:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, Qt::Key_CoreNavi_Previous, 0));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, KEYS::Key_CoreNavi_Previous, 0));
 				}
 				handled = true;
 				break;
-			case Qt::Key_Right:
+			case KEYS::Key_Right:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, Qt::Key_CoreNavi_Next, 0));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, KEYS::Key_CoreNavi_Next, 0));
 				}
 				handled = true;
 				break;
-			case Qt::Key_Home:
+			case KEYS::Key_Home:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, Qt::Key_CoreNavi_Home, 0));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, KEYS::Key_CoreNavi_Home, 0));
 				}
 				handled = true;
 				break;
-			case Qt::Key_Escape:
+			case KEYS::Key_Escape:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, Qt::Key_CoreNavi_Back, 0));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, KEYS::Key_CoreNavi_Back, 0));
 				}
 				handled = true;
 				break;
-			case Qt::Key_End:
+			case KEYS::Key_End:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, Qt::Key_CoreNavi_Launcher, 0));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, KEYS::Key_CoreNavi_Launcher, 0));
 				}
 				handled = true;
 				break;
-			case Qt::Key_Pause:
+			case KEYS::Key_Pause:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, Qt::Key_Power, keyEvent->modifiers()));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, KEYS::Key_Power, keyEvent->modifiers()));
 				}
 				handled = true;
 				break;
-			case Qt::Key_F6:
+			case KEYS::Key_F6:
 				window = QApplication::focusWidget();
 				if (window) {
                     QApplication::postEvent(window, new OrientationEvent(OrientationEvent::Orientation_Up));
@@ -92,7 +95,7 @@ protected:
 				handled = true;
 				break;
 
-			case Qt::Key_F7:
+			case KEYS::Key_F7:
 				window = QApplication::focusWidget();
 				if (window) {
                     QApplication::postEvent(window, new OrientationEvent(OrientationEvent::Orientation_Right));
@@ -100,7 +103,7 @@ protected:
 				handled = true;
 				break;
 
-			case Qt::Key_F8:
+			case KEYS::Key_F8:
 				window = QApplication::focusWidget();
 				if (window) {
                     QApplication::postEvent(window, new OrientationEvent(OrientationEvent::Orientation_Down));
@@ -108,7 +111,7 @@ protected:
 				handled = true;
 				break;
 
-			case Qt::Key_F9:
+			case KEYS::Key_F9:
 				window = QApplication::focusWidget();
 				if (window) {
                     QApplication::postEvent(window, new OrientationEvent(OrientationEvent::Orientation_Left));
@@ -121,45 +124,45 @@ protected:
 			QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
 
 			switch (keyEvent->key()) {
-			case Qt::Key_Left:
+			case KEYS::Key_Left:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Previous, 0));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, KEYS::Key_CoreNavi_Previous, 0));
 				}
 				handled = true;
 				break;
-			case Qt::Key_Right:
+			case KEYS::Key_Right:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Next, 0));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, KEYS::Key_CoreNavi_Next, 0));
 				}
 				handled = true;
 				break;
-			case Qt::Key_Home:
+			case KEYS::Key_Home:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Home, 0));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, KEYS::Key_CoreNavi_Home, 0));
 				}
 				handled = true;
 				break;
-			case Qt::Key_Escape:
+			case KEYS::Key_Escape:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Back, 0));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, KEYS::Key_CoreNavi_Back, 0));
 				}
 				handled = true;
 				break;
-			case Qt::Key_End:
+			case KEYS::Key_End:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Launcher, 0));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, KEYS::Key_CoreNavi_Launcher, 0));
 				}
 				handled = true;
 				break;
-			case Qt::Key_Pause:
+			case KEYS::Key_Pause:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_Power, keyEvent->modifiers()));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, KEYS::Key_Power, keyEvent->modifiers()));
 				}
 				handled = true;
 				break;

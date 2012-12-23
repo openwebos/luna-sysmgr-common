@@ -16,9 +16,6 @@
 *
 * LICENSE@@@ */
 
-
-
-
 #include "Common.h"
 
 #include <stdio.h>
@@ -58,6 +55,12 @@
 #include "Settings.h"
 #include "HostArm.h"
 #include "Logging.h"
+
+#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
+    #define KEYS Qt
+#else
+    #define KEYS
+#endif
 
 #if defined(HAS_HIDLIB)
 #include "HidLib.h"
@@ -550,20 +553,20 @@ bool HostArm::switchStateCallback(LSHandle* handle, LSMessage* msg, void* data)
 	if (!HostArm::getMsgValueInt(msg, value))
 		return true;
 
-	Qt::Key switchKey = Qt::Key_unknown;
+	KEYS::Key switchKey = KEYS::Key_unknown;
 	switch (switchCode) {
 	case SW_RINGER:
-		switchKey = Qt::Key_Ringer;
+		switchKey = KEYS::Key_Ringer;
 		break;
 	case SW_SLIDER:
-		switchKey = Qt::Key_Slider;
+		switchKey = KEYS::Key_Slider;
 		break;
 	case SW_HEADPHONE_INSERT:
 		if (value == HID_HEADSET_MIC_VAL) {
-			switchKey = Qt::Key_HeadsetMic;
+			switchKey = KEYS::Key_HeadsetMic;
 		}
 		else {
-			switchKey = Qt::Key_Headset;
+			switchKey = KEYS::Key_Headset;
 		}
 		break;
 	default: 
