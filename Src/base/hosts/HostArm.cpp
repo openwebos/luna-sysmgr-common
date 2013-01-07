@@ -47,6 +47,8 @@
 #include <QKeyEvent>
 #include <qsocketnotifier.h>
 
+#include <cjson/json.h>
+
 #include "CustomEvents.h"
 #include "Time.h"
 #include "HostBase.h"
@@ -76,14 +78,14 @@
 
 
 
-#if defined(HAS_QPA) && defined(TARGET_DEVICE)
+#if defined(HAS_QPA) && defined(HAS_PALM_QPA)
 // From the Palm QPA
 extern "C" void setTransform(QTransform*);
 extern "C" InputControl* getTouchpanel(void);
 extern "C" void setBluetoothCallback(void (*fun)(bool));
 #endif
 
-#if defined(HAS_QPA) && defined(TARGET_DEVICE)
+#if defined(HAS_QPA) && defined(HAS_PALM_QPA)
 static void bluetoothCallback(bool enable)
 {
     HostBase::instance()->setBluetoothKeyboardActive(enable);
@@ -117,7 +119,7 @@ HostArm::HostArm() :
 	m_hwRev = HidGetHardwareRevision();
 	m_hwPlatform = HidGetHardwarePlatform();
 #endif
-#if defined(HAS_QPA) && defined(TARGET_DEVICE)
+#if defined(HAS_QPA) && defined(HAS_PALM_QPA)
 	setBluetoothCallback(&bluetoothCallback);
 #endif
 }
@@ -221,7 +223,7 @@ void HostArm::init(int w, int h)
 	m_fb1NumBuffers = fixinfo.smem_len / (rowBytes * varinfo.yres);
 
 	printf("Linux Fb0: Num Buffers: %d, Fb1: Num Buffers: %d\n", m_fb0NumBuffers, m_fb1NumBuffers);
-#if defined(HAS_QPA) && defined(TARGET_DEVICE)
+#if defined(HAS_QPA) && defined(HAS_PALM_QPA)
 // From the Palm QPA
 	setTransform(&m_trans);
 #endif
@@ -781,7 +783,7 @@ InputControl* HostArm::getInputControlTouchpanel()
 {
     if (m_nyxInputControlTouchpanel)
         return m_nyxInputControlTouchpanel;
-#if defined(HAS_QPA) && defined(TARGET_DEVICE)
+#if defined(HAS_QPA) && defined(HAS_PALM_QPA)
     m_nyxInputControlTouchpanel = getTouchpanel();
 #endif
     if (!m_nyxInputControlTouchpanel)
