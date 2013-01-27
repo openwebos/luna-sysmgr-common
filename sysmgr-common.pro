@@ -102,7 +102,7 @@ STAGING_LIBDIR = $$(STAGING_LIBDIR)
 isEmpty(STAGING_LIBDIR):STAGING_LIBDIR = $$(STAGING_DIR)/lib
 
 CONFIG += link_pkgconfig
-PKGCONFIG = glib-2.0 gthread-2.0
+PKGCONFIG = glib-2.0 gthread-2.0 LunaSysMgrIpc
 
 QT = core network gui widgets
 
