@@ -164,7 +164,12 @@ protected:
                     keyToRemapTo = KEYS::Key_CoreNavi_Launcher;
                     break;
                 case Qt::Key_Pause:
+// QT5_TODO: Are these two equivalent?
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
                     keyToRemapTo = KEYS::Key_Power;
+#else
+                    keyToRemapTo = KEYS::Key_HardPower;
+#endif
                     break;
             }
             if(keyToRemapTo > 0) {
