@@ -46,6 +46,9 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include <qsocketnotifier.h>
+#if defined(USE_MOUSE_FILTER)
+#include <QGraphicsView>
+#endif // USE_MOUSE_FILTER
 
 #include <cjson/json.h>
 
