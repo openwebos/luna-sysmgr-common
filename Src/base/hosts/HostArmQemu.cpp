@@ -25,11 +25,8 @@
 #include <QtDebug>
 #include <QGraphicsView>
 
-#include <SysMgrDeviceKeydefs.h>
-
 #if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
     #define KEYS Qt
-    #define Key_HardPower Key_Power
 #else
     #define KEYS
 #endif
@@ -83,10 +80,10 @@ protected:
 				}
 				handled = true;
 				break;
-			case Qt::Key_Pause:
+			case KEYS::Key_Pause:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, KEYS::Key_HardPower, keyEvent->modifiers()));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyPress, KEYS::Key_Power, keyEvent->modifiers()));
 				}
 				handled = true;
 				break;
@@ -162,10 +159,10 @@ protected:
 				}
 				handled = true;
 				break;
-			case Qt::Key_Pause:
+			case KEYS::Key_Pause:
 				window = QApplication::focusWidget();
 				if (window) {
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, KEYS::Key_HardPower, keyEvent->modifiers()));
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, KEYS::Key_Power, keyEvent->modifiers()));
 				}
 				handled = true;
 				break;
