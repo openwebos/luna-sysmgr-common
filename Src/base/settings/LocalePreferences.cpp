@@ -1,6 +1,7 @@
 /* @@@LICENSE
 *
 *      Copyright (c) 2008-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2013 LG Electronics
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -37,8 +38,16 @@ static const char* s_defaultLocale = "en_us";
 static const char* s_defaultLocaleRegion = "us";
 static const char* s_defaultPhoneRegion = "us";
 static const char* s_prefsDbPath = "/var/luna/preferences/systemprefs.db";
+static const char* s_defaultTimezone = "Etc/UTC";
+static const char* s_defaultClock = "locale";
 
 static const char* s_logChannel = "LocalePreferences";
+
+static const char *kLocaleInfo_Root = "localeInfo";
+static const char *kLocaleInfo_Locales = "locales";
+static const char *kLocaleInfo_UILocale = "UI";
+static const char *kLocaleInfo_Timezone = "timezone";
+static const char *kLocaleInfo_Clock = "clock";
 
 LocalePreferences* LocalePreferences::instance()
 {
@@ -85,11 +94,45 @@ std::string LocalePreferences::timeFormat() const
     return m_currentTimeFormat;
 }
 
+QString LocalePreferences::uiLocale() const
+{
+    MutexLocker locker(&m_mutex);
+    return m_locales.locales.value(kLocaleInfo_UILocale);
+}
+
+QString LocalePreferences::locale(const QString &name) const
+{
+    MutexLocker locker(&m_mutex);
+    return m_locales.locales.value(name);
+}
+
+QString LocalePreferences::timezone() const
+{
+    MutexLocker locker(&m_mutex);
+    return m_locales.timezone;
+}
+
+QString LocalePreferences::clock() const
+{
+    MutexLocker locker(&m_mutex);
+    return m_locales.clock;
+}
+
+LocalePreferences::LocaleInfo LocalePreferences::locales() const
+{
+    MutexLocker locker(&m_mutex);
+    return m_locales;
+}
+
 void LocalePreferences::init()
 {
     m_locale = s_defaultLocale;
     m_localeRegion = s_defaultLocaleRegion;
     m_phoneRegion = s_defaultPhoneRegion;
+
+    m_locales.locales.insert(kLocaleInfo_UILocale, s_defaultLocale);
+    m_locales.timezone = s_defaultTimezone;
+    m_locales.clock = s_defaultClock;
 
     // We open the LocalePreferences database and read the locale setting.
     // avoid waiting for the system-service to come up
@@ -189,12 +232,72 @@ void LocalePreferences::init()
         json = 0;
     }
 
+    sqlite3_finalize(statement);
+
+    // immediately read localeInfo
+    ret = sqlite3_prepare(prefsDb,
+                          "SELECT * FROM Preferences WHERE KEY='localeInfo'",
+                          -1,
+                          &statement,
+                          &tail);
+
+    if (ret != SQLITE_OK) {
+        luna_critical(s_logChannel, "Failed to prepare query");
+        goto Done;
+    }
+
+    ret = sqlite3_step(statement);
+
+    if (ret == SQLITE_ROW) {
+        const char *val = (const char *) sqlite3_column_text(statement, 1);
+
+        if (!val) {
+            goto Done;
+        }
+
+        label = 0;
+        json = json_tokener_parse(val);
+
+        if (!json || is_error(json)) {
+            goto Done;
+        }
+
+        label = json_object_object_get(json, kLocaleInfo_Locales);
+
+        if (!label || is_error(label)) {
+            goto Done;
+        }
+
+        json_object_object_foreach(label, keyName, valueName) {
+            m_locales.locales.insert(keyName, json_object_get_string(valueName));
+        }
+
+        label = json_object_object_get(json, kLocaleInfo_Timezone);
+
+        if (!label || is_error(label)) {
+            goto Done;
+        }
+
+        m_locales.timezone = QString(json_object_get_string(label));
+
+        label = json_object_object_get(json, kLocaleInfo_Clock);
+
+        if (!label || is_error(label)) {
+            goto Done;
+        }
+
+        m_locales.clock = QString(json_object_get_string(label));
+
+        json_object_put(json);
+        json = 0;
+    }
+
 Done:
 
-    QLocale myLocale (m_locale.c_str());
+    QLocale myLocale(m_locales.locales.value(kLocaleInfo_UILocale));
     g_message ("%s: setting locale country %d language %d", __PRETTY_FUNCTION__,
             myLocale.country(), myLocale.language());
-    QLocale::setDefault (myLocale);
+    QLocale::setDefault(myLocale);
 
     // locale region defaults to locale country code
     if (m_localeRegion.empty())
@@ -293,6 +396,20 @@ bool LocalePreferences::serverConnectCallback(LSHandle *sh, LSMessage *message, 
                      "{\"subscribe\":true, \"keys\": [ \"region\", \
                                                        \"timeFormat\" ]}",
                      getPreferencesCallback, prefObjPtr, NULL, &error);
+        if (!ret) {
+            g_critical("%s: Failed in calling palm://com.palm.systemservice/getPreferences: %s",
+                       __PRETTY_FUNCTION__, error.message);
+            LSErrorFree(&error);
+        }
+
+        ret = LSCall(LocalePreferences::instance()->m_lsHandle,
+                     "palm://com.palm.systemservice/getPreferences",
+                     "{\"subscribe\":true, \"keys\": [ \"localeInfo\" ]}",
+                     getLocaleInfoCallback,
+                     prefObjPtr,
+                     NULL,
+                     &error);
+
         if (!ret) {
             g_critical("%s: Failed in calling palm://com.palm.systemservice/getPreferences: %s",
                        __PRETTY_FUNCTION__, error.message);
@@ -431,3 +548,109 @@ Done:
     return true;
 }
 
+bool LocalePreferences::getLocaleInfoCallback(LSHandle *sh,
+                                              LSMessage *message,
+                                              void *ctx)
+{
+    if (!message) {
+        return true;
+    }
+
+    const char *payload = LSMessageGetPayload(message);
+
+    if (!payload) {
+        return true;
+    }
+
+    g_message("LocalePreferences::getLocaleInfoCallback(): [%s]\n", payload);
+
+    LocalePreferences *lp = (LocalePreferences *)ctx;
+    json_object *rootObj = 0;
+    json_object *localeInfoObj = 0;
+    json_object *localesObj = 0;
+    json_object *subObj = 0;
+    QHash<QString, QString> newLocales;
+    QString newValue;
+    bool changed = false;
+
+    rootObj = json_tokener_parse(payload);
+
+    if (!rootObj || is_error(rootObj)) {
+        goto Done;
+    }
+
+    localeInfoObj = json_object_object_get(rootObj, kLocaleInfo_Root);
+
+    if (!localeInfoObj || is_error(localeInfoObj)) {
+        goto Done;
+    }
+
+    localesObj = json_object_object_get(localeInfoObj, kLocaleInfo_Locales);
+
+    if (!localesObj || is_error(localesObj)) {
+        goto Done;
+    }
+
+    json_object_object_foreach(localesObj, keyName, valueName) {
+        newLocales.insert(keyName, json_object_get_string(valueName));
+    }
+
+    lp->m_mutex.lock();
+
+    if (!newLocales.isEmpty() && newLocales != lp->m_locales.locales) {
+        if (newLocales.value(kLocaleInfo_UILocale) !=
+            lp->m_locales.locales.value(kLocaleInfo_UILocale)) {
+            QLocale::setDefault(QLocale(newLocales.value(kLocaleInfo_UILocale)));
+        }
+
+        lp->m_locales.locales = newLocales;
+        changed = true;
+    }
+
+    lp->m_mutex.unlock();
+
+    subObj = json_object_object_get(localeInfoObj, kLocaleInfo_Timezone);
+
+    if (!subObj || is_error(subObj)) {
+        goto Done;
+    }
+
+    newValue = QString(json_object_get_string(subObj));
+    lp->m_mutex.lock();
+
+    if (!newValue.isEmpty() && newValue != lp->m_locales.timezone) {
+        lp->m_locales.timezone = newValue;
+        changed = true;
+    }
+
+    lp->m_mutex.unlock();
+    subObj = json_object_object_get(localeInfoObj, kLocaleInfo_Clock);
+
+    if (!subObj || is_error(subObj)) {
+        goto Done;
+    }
+
+    newValue = QString(json_object_get_string(subObj));
+    lp->m_mutex.lock();
+
+    if (!newValue.isEmpty() && newValue != lp->m_locales.clock) {
+        lp->m_locales.clock = newValue;
+        changed = true;
+    }
+
+    lp->m_mutex.unlock();
+
+    json_object_put(rootObj);
+    rootObj = 0;
+
+Done:
+    if (rootObj && !is_error(rootObj)) {
+        json_object_put(rootObj);
+    }
+
+    if (changed) {
+        Q_EMIT lp->localeInfoChanged();
+    }
+
+    return true;
+}
