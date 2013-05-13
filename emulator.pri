@@ -48,11 +48,9 @@ contains (CONFIG_BUILD, webosemulator) {
 
     HEADERS +=  HostArm.h
 
-    #DEFINES += ENABLE_JS_DEBUG_VERBOSE
-
     LIBS += -Wl,-rpath $$(STAGING_LIBDIR)
 
-    DEFINES += $$TARGET_TYPE HAS_LUNA_PREF=1 QT_PLUGIN QT_STATICPLUGIN
+    DEFINES += $$TARGET_TYPE
 
     DEFINES += HAS_QPA
 

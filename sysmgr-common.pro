@@ -108,11 +108,6 @@ QT = core network gui widgets
 
 # ../staging/include ../staging/include/PmLogLib ../staging/include/sysmgr-ipc
 
-DEFINES += QT_WEBOS
-
-# For shipping version of the code, as opposed to a development build. Set this to 1 late in the process...
-DEFINES += SHIPPING_VERSION=0
-
 QMAKE_CXXFLAGS += -fno-rtti -fno-exceptions -Wall -fpermissive # -fvisibility=hidden
 QMAKE_CXXFLAGS += -DFIX_FOR_QT
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-variable -Wno-reorder -Wno-missing-field-initializers -Wno-extra

@@ -45,7 +45,7 @@ INCLUDEPATH += \
         $$(STAGING_INCDIR)/ime \
 
 
-DEFINES += $$TARGET_TYPE HAS_LUNA_PREF=1 QT_PLUGIN QT_STATICPLUGIN HAS_QPA
+DEFINES += $$TARGET_TYPE HAS_QPA
 
 ## End of standard assignments across all devices
 ########################################################
