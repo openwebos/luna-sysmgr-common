@@ -37,6 +37,7 @@ bool ApplicationDescriptionBase::fromJsonObject(const struct json_object* root)
     success &= extractFromJson(root, "main", m_entryPoint);
     success &= extractFromJson(root, "noWindow", m_isHeadLess);
     success &= extractFromJson(root, "requestedWindowOrientation", m_requestedWindowOrientation);
+    success &= extractFromJson(root, "title", m_title);
 
     if(!success)
         fprintf(stderr,"ApplicationDescriptionBase::fromJsonString : error decodeing app description JSON string.\n" );
@@ -62,6 +63,7 @@ json_object* ApplicationDescriptionBase::getAppDescription() const
     json_object_object_add(json, (char*) "main",   json_object_new_string((char*) m_entryPoint.c_str()));
     json_object_object_add(json, (char*) "noWindow",   json_object_new_boolean(m_isHeadLess));
     json_object_object_add(json, (char*) "requestedWindowOrientation", json_object_new_string((char*) m_requestedWindowOrientation.c_str()));
+    json_object_object_add(json, (char*) "title", json_object_new_string((char *) m_title.c_str()));
 
     return json;
 }
