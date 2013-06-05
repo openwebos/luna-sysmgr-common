@@ -39,6 +39,7 @@ public:
     virtual ~ApplicationDescriptionBase() {}
     const std::string& id()         const { return m_id; }
     const std::string& title()         const { return m_title; }
+    const std::string& icon()       const { return m_icon; }
     const std::string& entryPoint() const { return m_entryPoint; }
     bool               isHeadLess() const { return m_isHeadLess; }
 
@@ -53,6 +54,7 @@ protected:
 
     std::string             m_id;
     std::string             m_title;    //copy of default launchpoint's title
+    std::string             m_icon;
     std::string             m_entryPoint;
     bool                    m_isHeadLess;
     std::string             m_requestedWindowOrientation;
