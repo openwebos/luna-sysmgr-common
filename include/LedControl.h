@@ -2,7 +2,7 @@
  *******************************************************************************
  * @file LedControl.h
  *
- * Copyright (c) 2010 Hewlett-Packard Development Company, L.P.
+ * Copyright (c) 2010-2013 LG Electronics, Inc.
  * All rights reserved.
  *
  * @brief
