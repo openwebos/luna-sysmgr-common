@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2008-2013 LG Electronics, Inc.
+*      Copyright (c) 2008-2014 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -284,9 +284,12 @@ nopServiceResponse(LSHandle * /*sh*/, LSMessage * /*reply*/, void * /*ctx*/ )
 
 void HostArm::setupInput(void) {
 
-    nyx_init();
-
-    nyx_error_t error = NYX_ERROR_NONE;
+    nyx_error_t error = nyx_init();
+    if(error != NYX_ERROR_NONE)
+    {
+        g_critical("Unable to initialize nyx");
+        return;
+    }
 
     InputControl *ic = getInputControlALS();
     if (NULL != ic)
